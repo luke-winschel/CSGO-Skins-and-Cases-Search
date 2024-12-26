@@ -1,7 +1,7 @@
 import json
 from types import NoneType
+from colorist import BrightColor, hex, ColorHex
 
-from colorist import BrightColor, hex
 class InvalidInput:
     pass
 
@@ -36,11 +36,39 @@ class SkinData:
 
     def get_item_color (self, item_name):
         """Returns the hex value of the item requested"""
+        gold = ColorHex ("#e4ae39")
+        red = ColorHex ("#eb4b4b")
+        pink = ColorHex ("#d32ce6")
+        purple = ColorHex ("#8847ff")
+        blue = ColorHex ("#4b69ff")
+        light_blue = ColorHex ("#5e98d9")
+        white = ColorHex ("#b0c3d9")
         skins_length = len(self._list)
         for i in range (0, skins_length):
             if self._list[i]['name'] == item_name:
                 color = self._list[i]['rarity']['color']
-        return color
+                if color == "#e4ae39" or self.is_knife(item_name) == True:
+                    item_color = gold
+                    break
+                if color == "#eb4b4b":
+                    item_color = red
+                    break
+                if color == "#d32ce6":
+                    item_color = pink
+                    break
+                if color == "#8847ff":
+                    item_color = purple
+                    break
+                if color == "#4b69ff":
+                    item_color = blue
+                    break
+                if color == "#5e98d9":
+                    item_color = light_blue
+                    break
+                if color == "#b0c3d9":
+                    item_color = white
+                    break
+        return item_color
 
     def get_matching_weapon_list(self):
         """Returns matching weapons list"""
@@ -109,6 +137,20 @@ class SkinData:
                 matching_weapon_list.append(self._list[i]['name'])
         return matching_weapon_list
 
+    def find_case(self, item_name):
+        """Finds the cases that an item can be inside"""
+        case_list = []
+        skins_length = len(self._list)
+        for i in range (0, skins_length):
+            if item_name == self._list[i]['name']:
+                cases = self._list[i]['crates']
+                if cases == []:
+                    case_list.append("There are no available cases for this weapon!")
+                else:
+                    for j in range (0, len(cases)):
+                        case_list.append(cases[j]['name'])
+        return case_list
+
     def sort_list(self, matching_weapon_list):
         """Sorts lists alphabetically and by item rarities"""
         new_matching_weapons_list = []
@@ -169,18 +211,17 @@ class SkinData:
     def display(self, matching_weapon_list):
         """Prints matching weapons list in a more readable format"""
         new_matching_weapon_list = self.sort_list(matching_weapon_list)
-        print("Skins:")
         for item in new_matching_weapon_list:
-            current_item = self.is_knife(item)
-            if current_item:
-                hex(item, '#e4ae39')
-            else:
-                color = self.get_item_color(item)
-                hex(item, color)
+            cases = self.find_case(item)
+            color = self.get_item_color(item)
+            print(f"{color}{item}{color.OFF}, can be found in:")
+            for i in range (len(cases)):
+                print("\t", cases[i])
+            print()
+
 
 sd = SkinData()
 try:
-
     #Tests the weapon search function.
     #Returns all the M4A4 Skins from the linked Json file
     #skins = sd.search_by_weapon('M4A4')
@@ -188,8 +229,8 @@ try:
 
     #Tests the search by stattrak function
     #Returns all weapons that are stattrak from the linked Json file
-    skins2 = sd.search_by_stattrack(True)
-    sd.display(skins2)
+    #skins2 = sd.search_by_stattrack(True)
+    #sd.display(skins2)
 
     #Tests the Search by rarity function
     #Returns all weapons that have an Industrial Grade Rarity from the linked Json file
@@ -213,8 +254,8 @@ try:
 
     #Tests the Search by weapon, rarity, and stattrack function
     #Returns all weapons that are M4A4, have an industrial grade rarity and are not stattrak
-    #skins7 = sd.search_by_weapon_rarity_stattrakk('M4A4', 'Industrial Grade', False)
-    #sd.display(skins7)
+    skins7 = sd.search_by_weapon_rarity_stattrakk('M4A4', 'Industrial Grade', False)
+    sd.display(skins7)
 
 except InvalidInput:
     print("User entered an invalid input.  Please Try Again!")
