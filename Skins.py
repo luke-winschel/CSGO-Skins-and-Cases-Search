@@ -1,6 +1,5 @@
 import json
 from types import NoneType
-
 from colorist import BrightColor, hex
 class InvalidInput:
     pass
@@ -165,7 +164,6 @@ class SkinData:
 
         return new_matching_weapons_list
 
-
     def display(self, matching_weapon_list):
         """Prints matching weapons list in a more readable format"""
         new_matching_weapon_list = self.sort_list(matching_weapon_list)
@@ -180,7 +178,6 @@ class SkinData:
 
 sd = SkinData()
 try:
-
     #Tests the weapon search function.
     #Returns all the M4A4 Skins from the linked Json file
     #skins = sd.search_by_weapon('M4A4')
