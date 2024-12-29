@@ -7,34 +7,134 @@ class InvalidInput:
 
 class SkinData:
     def __init__(self):
+        """Opens the json file for other functions to read from"""
         with open ('skins.json', 'r') as infile:
             self._list = json.load(infile)
             self._matching_weapon_list = []
 
-    def is_knife (self, item_name):
+    def search_by_weapon (self, weapon):
+        """Finds matching skins by weapon"""
+        skins_length = len(self._list)
+        matching_weapon_list = []
+        for i in range (0, skins_length):
+            if self._list[i]['weapon']['name'] == weapon:
+                matching_weapon_list.append(self._list[i]['id'])
+        return matching_weapon_list
+
+    def search_by_stattrack(self, stattrak):
+        """Finds matching skins by stattrak"""
+        skins_length = len(self._list)
+        matching_weapon_list = []
+        for i in range(0, skins_length):
+            if self._list[i]['stattrak'] == stattrak:
+                matching_weapon_list.append(self._list[i]['id'])
+        return matching_weapon_list
+
+    def search_by_rarity(self, rarity):
+        """Finds skins by rarity"""
+        skins_length = len(self._list)
+        matching_weapon_list = []
+        for i in range(0, skins_length):
+            if self._list[i]['rarity']['name'] == rarity:
+                matching_weapon_list.append(self._list[i]['id'])
+        return matching_weapon_list
+
+    def search_by_rarity_and_weapon(self, rarity, weapon):
+        """Finds Skins by weapon type and rarity"""
+        skins_length = len(self._list)
+        matching_weapon_list = []
+        for i in range(0, skins_length):
+            if self._list[i]['rarity']['name'] == rarity and self._list[i]['weapon']['name'] == weapon:
+                matching_weapon_list.append(self._list[i]['id'])
+        return matching_weapon_list
+
+    def search_by_rarity_and_stattrak(self, rarity, stattrak):
+        """Finds Skins by weapon type and stattrak"""
+        skins_length = len(self._list)
+        matching_weapon_list = []
+        for i in range(0, skins_length):
+            if self._list[i]['rarity']['name'] == rarity and self._list[i]['stattrak'] == stattrak:
+                matching_weapon_list.append(self._list[i]['id'])
+        return matching_weapon_list
+
+    def search_by_weapon_and_stattrak(self, weapon, stattrak):
+        """Finds Skins by weapon type and stattrak"""
+        skins_length = len(self._list)
+        matching_weapon_list = []
+        for i in range(0, skins_length):
+            if self._list[i]['weapon']['name'] == weapon and self._list[i]['stattrak'] == stattrak:
+                matching_weapon_list.append(self._list[i]['id'])
+        return matching_weapon_list
+
+    def search_by_weapon_rarity_stattrakk(self, weapon, rarity, stattrak):
+        """Finds skins by weapon, rarity, and stattrak"""
+        skins_length = len(self._list)
+        matching_weapon_list = []
+        for i in range(0, skins_length):
+            if self._list[i]['weapon']['name'] == weapon and self._list[i]['stattrak'] == stattrak and self._list[i]['rarity']['name'] == rarity:
+                matching_weapon_list.append(self._list[i]['id'])
+        return matching_weapon_list
+
+    def get_name(self, id):
+        """Finds the name of a skin from the Skin ID"""
+        skins_length = len(self._list)
+        for i in range (0, skins_length):
+            if id == self._list[i]['id']:
+                name = self._list[i]['name']
+        return name
+
+    def find_case(self, id):
+        """Finds the cases that an item can be inside"""
+        case_list = []
+        skins_length = len(self._list)
+        for i in range (0, skins_length):
+            if id == self._list[i]['id']:
+                cases = self._list[i]['crates']
+                if cases == []:
+                    case_list.append("There are no available cases for this weapon!")
+                else:
+                    for j in range (0, len(cases)):
+                        case_list.append(cases[j]['name'])
+        return case_list
+
+    def is_knife (self, id):
         """Takes an item name and determines if the item is a knife"""
+        skins_length = len(self._list)
         knife = False
-        if "★" in item_name:
-            knife = True
+        for i in range (0, skins_length):
+            if id == self._list[i]['id']:
+                if self._list[i]['category']['name'] == 'Knives':
+                    knife = True
         return knife
 
-    def get_pattern_name(self, item_name):
+    def is_doppler(self, id):
+        """Returns the phase of the doppler for skin clarification"""
+        doppler = False
+        skins_length = len(self._list)
+        for i in range (0, skins_length):
+            if id == self._list[i]['id']:
+                name = self._list[i]['name']
+                if "Doppler" in name:
+                    doppler = True
+        return doppler
+
+    def get_phase(self, id):
         """Returns the name of an items skin pattern"""
         skins_length = len(self._list)
         for i in range(0, skins_length):
-            if item_name == self._list[i]['name']:
-                skin_pattern = self._list[i]['pattern']['name']
-        return skin_pattern
+            if id == self._list[i]['id']:
+                skin_phase = self._list[i]['phase']
+        return skin_phase
 
-    def get_item_rarity(self, item_name):
+    def get_item_rarity(self, id):
         """Returns the rarity of an item"""
         skins_length = len(self._list)
         for i in range (0, skins_length):
-            if item_name == self._list[i]['name']:
+            if id == self._list[i]['id']:
                 item_rarity = self._list[i]['rarity']['name']
         return item_rarity
 
-    def get_item_color (self, item_name):
+    def get_item_color (self, id):
         """Returns the hex value of the item requested"""
         gold = ColorHex ("#e4ae39")
         red = ColorHex ("#eb4b4b")
@@ -45,9 +145,9 @@ class SkinData:
         white = ColorHex ("#b0c3d9")
         skins_length = len(self._list)
         for i in range (0, skins_length):
-            if self._list[i]['name'] == item_name:
+            if self._list[i]['id'] == id:
                 color = self._list[i]['rarity']['color']
-                if color == "#e4ae39" or self.is_knife(item_name) == True:
+                if color == "#e4ae39" or self.is_knife(id) == True:
                     item_color = gold
                     break
                 if color == "#eb4b4b":
@@ -70,87 +170,6 @@ class SkinData:
                     break
         return item_color
 
-    def get_matching_weapon_list(self):
-        """Returns matching weapons list"""
-        return self._matching_weapon_list()
-
-    def search_by_weapon (self, weapon):
-        """Finds matching skins by weapon"""
-        skins_length = len(self._list)
-        matching_weapon_list = []
-        for i in range (0, skins_length):
-            if self._list[i]['weapon']['name'] == weapon:
-                matching_weapon_list.append(self._list[i]['name'])
-        return matching_weapon_list
-
-    def search_by_stattrack(self, stattrak):
-        """Finds matching skins by stattrak"""
-        skins_length = len(self._list)
-        matching_weapon_list = []
-        for i in range(0, skins_length):
-            if self._list[i]['stattrak'] == stattrak:
-                matching_weapon_list.append(self._list[i]['name'])
-        return matching_weapon_list
-
-    def search_by_rarity(self, rarity):
-        """Finds skins by rarity"""
-        skins_length = len(self._list)
-        matching_weapon_list = []
-        for i in range(0, skins_length):
-            if self._list[i]['rarity']['name'] == rarity:
-                matching_weapon_list.append(self._list[i]['name'])
-        return matching_weapon_list
-
-    def search_by_rarity_and_weapon(self, rarity, weapon):
-        """Finds Skins by weapon type and rarity"""
-        skins_length = len(self._list)
-        matching_weapon_list = []
-        for i in range(0, skins_length):
-            if self._list[i]['rarity']['name'] == rarity and self._list[i]['weapon']['name'] == weapon:
-                matching_weapon_list.append(self._list[i]['name'])
-        return matching_weapon_list
-
-    def search_by_rarity_and_stattrak(self, rarity, stattrak):
-        """Finds Skins by weapon type and stattrak"""
-        skins_length = len(self._list)
-        matching_weapon_list = []
-        for i in range(0, skins_length):
-            if self._list[i]['rarity']['name'] == rarity and self._list[i]['stattrak'] == stattrak:
-                matching_weapon_list.append(self._list[i]['name'])
-        return matching_weapon_list
-
-    def search_by_weapon_and_stattrak(self, weapon, stattrak):
-        """Finds Skins by weapon type and stattrak"""
-        skins_length = len(self._list)
-        matching_weapon_list = []
-        for i in range(0, skins_length):
-            if self._list[i]['weapon']['name'] == weapon and self._list[i]['stattrak'] == stattrak:
-                matching_weapon_list.append(self._list[i]['name'])
-        return matching_weapon_list
-
-    def search_by_weapon_rarity_stattrakk(self, weapon, rarity, stattrak):
-        """Finds skins by weapon, rarity, and stattrak"""
-        skins_length = len(self._list)
-        matching_weapon_list = []
-        for i in range(0, skins_length):
-            if self._list[i]['weapon']['name'] == weapon and self._list[i]['stattrak'] == stattrak and self._list[i]['rarity']['name'] == rarity:
-                matching_weapon_list.append(self._list[i]['name'])
-        return matching_weapon_list
-
-    def find_case(self, item_name):
-        """Finds the cases that an item can be inside"""
-        case_list = []
-        skins_length = len(self._list)
-        for i in range (0, skins_length):
-            if item_name == self._list[i]['name']:
-                cases = self._list[i]['crates']
-                if cases == []:
-                    case_list.append("There are no available cases for this weapon!")
-                else:
-                    for j in range (0, len(cases)):
-                        case_list.append(cases[j]['name'])
-        return case_list
-
     def sort_list(self, matching_weapon_list):
         """Sorts lists alphabetically and by item rarities"""
         new_matching_weapons_list = []
@@ -162,25 +181,25 @@ class SkinData:
         industrial = []
         consumer = []
         skins_length = len(self._list)
-        for item in matching_weapon_list:
-            current_item = self.is_knife(item)
+        for id in matching_weapon_list:
+            current_item = self.is_knife(id)
             for i in range (0, skins_length):
-                if self._list[i]['name'] == item:
-                    item_rarity = self.get_item_rarity(item)
+                if self._list[i]['id'] == id:
+                    item_rarity = self.get_item_rarity(id)
                     if item_rarity == 'Contraband' or current_item == True:
-                        contraband.append(item)
+                        contraband.append(id)
                     elif item_rarity == 'Covert':
-                        covert.append(item)
+                        covert.append(id)
                     elif item_rarity == 'Classified':
-                        classified.append(item)
+                        classified.append(id)
                     elif item_rarity == 'Restricted':
-                        restricted.append(item)
+                        restricted.append(id)
                     elif item_rarity == 'Mil-Spec Grade':
-                        mil_spec.append(item)
+                        mil_spec.append(id)
                     elif item_rarity == 'Industrial Grade':
-                        industrial.append(item)
+                        industrial.append(id)
                     else:
-                        consumer.append(item)
+                        consumer.append(id)
 
         new_contraband = sorted(contraband)
         new_covert = sorted(covert)
@@ -207,55 +226,36 @@ class SkinData:
 
         return new_matching_weapons_list
 
+    def remove_duplicates(self, case_list):
+            list_2 = []
+            for i in range(0, len(case_list)):
+                index = case_list[i]
+                if index not in list_2:
+                    list_2.append(index)
+            list_2.sort()
+            return list_2
 
     def display(self, matching_weapon_list):
         """Prints matching weapons list in a more readable format"""
         new_matching_weapon_list = self.sort_list(matching_weapon_list)
-        for item in new_matching_weapon_list:
-            cases = self.find_case(item)
-            color = self.get_item_color(item)
-            print(f"{color}{item}{color.OFF}, can be found in:")
-            for i in range (len(cases)):
-                print("\t", cases[i])
+        for id in new_matching_weapon_list:
+            cases = self.find_case(id)
+            refined_cases = self.remove_duplicates(cases)
+            color = self.get_item_color(id)
+            item = self.get_name(id)
+            if self.is_knife(id) and self.is_doppler(id) == True:
+                phase = self.get_phase(id)
+                print(f"{color}{item} {phase}{color.OFF}, can be found in:")
+            else:
+                print(f"{color}{item}{color.OFF}, can be found in:")
+            for i in range (len(refined_cases)):
+                print("\t", refined_cases[i])
             print()
 
 
 sd = SkinData()
 try:
-    #Tests the weapon search function.
-    #Returns all the M4A4 Skins from the linked Json file
-    #skins = sd.search_by_weapon('M4A4')
-    #sd.display(skins)
-
-    #Tests the search by stattrak function
-    #Returns all weapons that are stattrak from the linked Json file
-    #skins2 = sd.search_by_stattrack(True)
-    #sd.display(skins2)
-
-    #Tests the Search by rarity function
-    #Returns all weapons that have an Industrial Grade Rarity from the linked Json file
-    #skins3 = sd.search_by_rarity('Industrial Grade')
-    #sd.display(skins3)
-
-    #Testst the search by rarity and weapon function
-    #Returns all weapons that are M4A4 and have an industrial grade rarity
-    #skins4 = sd.search_by_rarity_and_weapon('Industrial Grade', 'M4A4')
-    #sd.display(skins4)
-
-    #Tests the Search by rarity and stattrak function
-    #Returns all weapons that have a Mil-Spec Grade rarity and are stattrak
-    #skins5 = sd.search_by_rarity_and_stattrak('Mil-Spec Grade', True)
-    #sd.display(skins5)
-
-    #Tests the Search by weapon and stattrak
-    #Returns all weapons that are M4A4 and are stattrak
-    #skins6 = sd.search_by_weapon_and_stattrak('M4A4', True)
-    #sd.display(skins6)
-
-    #Tests the Search by weapon, rarity, and stattrack function
-    #Returns all weapons that are M4A4, have an industrial grade rarity and are not stattrak
-    skins7 = sd.search_by_weapon_rarity_stattrakk('M4A4', 'Industrial Grade', False)
-    sd.display(skins7)
-
+    test = sd.search_by_weapon("Talon Knife")
+    sd.display(test)
 except InvalidInput:
-    print("User entered an invalid input.  Please Try Again!")
+    print("No matching value!")
